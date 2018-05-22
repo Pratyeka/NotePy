@@ -104,6 +104,9 @@
         def __iadd__(self, other):
             self.x, self.y = self.x + other.x, self.y + other.y
             return self
+        def __radd__(self, other):
+            self.x, self.y = self.x + other, self.y + other
+            return self
 
         def __isub__(self, other):
             self.x, self.y = self.x - other.x, self.y - other.y
@@ -121,11 +124,19 @@
     a += c
     print(a)
 
+    ra = 1 + a # 调用了radd方法
+    print(ra)
+    m = B(3)
+    rb = m + b # 调用了radd方法
+    print(rb)
     # print(a == b)
     # print(a == c)
     # print({a, b, c})
 ```
 - ***注意***：在函数中直接返回self，可以实现链式编程
+- *__radd__方法注释*：
+    - `1+a`等价与`1.__add__(a)`,int类实现了__add__方法，但是无法完成两个实例的元算，返回NotImplemented关键字，解释器发现是该关键字就会调用a.__radd__(1)
+    - `m + b`等价于`m.__add__(b)`, m没有实现__add__方法，则调用b.__radd__(m)
 
 #### 容器相关方法
 - `__len__(self)`: 返回对象的长度（>=0的整数）
