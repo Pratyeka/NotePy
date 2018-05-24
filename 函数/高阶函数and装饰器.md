@@ -19,7 +19,7 @@
 - *注意*：两个函数对象的ID是不一致的，但是两个常量对象的ID是一致的
 - 在列表中`==`号是比较两个列表的内容是否一致，因为重构了该符号
 - 这里的`==`号比较的是两个对象的ID号，因为函数没有对该符号重构
-```
+```python
     def counter(base):
         def inc(step=1):
             nonlocal base
@@ -64,7 +64,7 @@ is与==区别 (https://zhuanlan.zhihu.com/p/35219174)
     - 装饰器在*加载模块时*立即执行（函数定义之后立即执行）
         - 导入时 和 运行时的区别
     - 由于装饰函数函数的返回值与原函数一致，嵌套装饰时（按未装饰的函数写装饰函数即可）
-```
+```python
     from datetime import datetime
     import time
 
@@ -122,7 +122,7 @@ is与==区别 (https://zhuanlan.zhihu.com/p/35219174)
     - 2. 使用`update_wrapper(wrapper, wrapped)`函数，更新元数据
     - 3. *[方法1与方法2比较](https://github.com/Pratyeka/NotePy/blob/master/%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97.md)*
 
-```
+```python
     from functools import wraps, update_wrapper
     import time
 
