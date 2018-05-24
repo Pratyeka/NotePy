@@ -459,45 +459,40 @@ awk命令：报表生成器,格式化文本的输出
     -s： 静默输入，用于密码输入
 - 条件语句以及循环语句
 * if语句的格式为：	
-```
-
-      	if[ 判断条件 ];then
-        	statement
-      	elif[ 判断条件 ];then
-        	statement
-      	else
-        	statement
-      	fi
+```sh
+	if[ 判断条件 ];then
+		statement
+	elif[ 判断条件 ];then
+		statement
+	else
+		statement
+	fi
 ```
 * case语句的格式为：
-```
-	
-      	case 变量引用 in
-      	PAT1)
-        	statement
-        	;;
-      	PAT2)
-        	statement
-        	;;
-      	esac
+```sh
+	case 变量引用 in
+	PAT1)
+		statement
+		;;
+	PAT2)
+		statement
+		;;
+	esac
 ```
 * for语句的格式为：
-```
-
-		for 变量名 in 列表;do          for ((init;条件表达式;控制变量的修正));do
-			statement                         statement 
-		done                          done
+```sh
+	for 变量名 in 列表;do          for ((init;条件表达式;控制变量的修正));do
+		statement                         statement 
+	done                          done
 ```
 * while语句的格式为：
-```
-
-		while 条件; do
-			statement
-		done        
+```sh
+	while 条件; do
+		statement
+	done        
 ```      
 * 函数的格式：
-```
-
+```sh
 		fName(){
 			statement;
 		}      
