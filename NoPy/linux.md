@@ -25,7 +25,7 @@
 ### 网络相关命令 ###
 
 - 获取ip地址： `ifconfig`  或者 `ip -a`
-- 修改网卡名称： `vim /boot/grub2.cfg`, 在第一个linux16后添加 `net.ifnames=0`
+- 修改网卡名称： `vim /boot/grub2/grub.cfg`, 在第一个linux16后添加 `net.ifnames=0`
 - 与服务器时间临时同步：`ntpdate IP` (及时同步时间命令)
 - 与服务器时间永久同步：`vim /etc/ntp.conf`  添加  `service IP iburst`后执行：
 - ntpd开关
@@ -109,25 +109,27 @@
 - 预览rpm包中的文件：`rpm2cpio 包文件 | cpio -itv`
 - 释放rpm包中的文件：`rpm2cpio 包文件 | cpio -id "*.conf"`
 
-##### yum #####
+##### yum配置
 - yum：rpm包管理器的前端工具（解决依赖性问题）
 - yum仓库：*.rpm文件、 rpm包的元数据（repodata文件夹）
 - yum配置：
     1. 首先备份 `/etc/yum.repo.d`文件夹中的所有文件
     2. 新建`base.repo`文件（必须以repo为后缀，光盘文件默认使用base为名）
     3. 编辑文件内容如下：
->	
+>
 		[base]
 		name=base   (ps:名字随便起,标示而已)
-		baseurl=file:///misc/cd [见注释]
-		gpgcheck=1
-		gpgkey=/path/to/keyfile
+		baseurl=file:///misc/cd  [见注释]
+		gpgcheck=1    是否需要检查秘钥
+		gpgkey=/path/to/keyfile 秘钥
 		enabled=0（禁用该yum源）
+
 - baseurl注释：
     1. 开启autofs工具：`systemctl start autofs`
     2. 设置开机自启动： `systemctl enable autofs`
     3. 执行下面的命令完成自动挂载 `cd /misc && cd /cd` 
-    4. 路径名以repodata文件的父目录为准       
+    4. *路径名以repodata文件的父目录为准* 
+	- 挂载路径： 'mount src dst'
 - yum执行的命令历史：`yum history`
 - 查看对应num的安装细节：`yum history info num`
 - 撤销yum安装num的全部文件：`yum history undo num`（可以用来完全卸载安装的文件）
@@ -142,8 +144,8 @@
 - 卸载软件：`yum remove name`
 - yum仓库创建：`creatrepo dir`
 - yum安装软件错误：一般是配置文件中的路径错误或者元数据的缓存文件没有清空
-- 查看二进制程序的依赖库文件：      ldd /path/to/binary_file
-- 查看当前系统正在使用的库文件：    ldconfig -v
+- 查看二进制程序的依赖库文件：      `ldd /path/to/binary_file`
+- 查看当前系统正在使用的库文件：    `ldconfig -v`
 
 #### CentOS 源码编译安装软件 ####
 - 安装步骤
@@ -155,14 +157,14 @@
 	6. `make -j4 && make install`
 	7. 根据INSTALL中的说明指示开启软件
 	8. 常用软件可以将路径加入到PATH中:
->
-		echo 'PATH=/apps/name/bin:$PATH' > /etc/profile.d/nameAddPath.sh   
-		source /etc/profile.d/nameAddPath.sh    
+```shell
+	echo 'PATH=/apps/name/bin:$PATH' > /etc/profile.d/nameAddPath.sh   
+	source /etc/profile.d/nameAddPath.sh
+```
 - 卸载步骤：
 	1. 退出软件的服务（`ss -ntl`可以查看httpd的运行状态，根据INSTALL中的指令关闭软件）
 	2. 删除安装时指定的文件夹  
 	3. 删除`/etc/profile.d/nameAddPath.sh`文件                                    
-
 
 ***                               
 ### 文件目录管理 ###
@@ -200,7 +202,7 @@
 - 标准输出以及标准错误的默认设备是当前终端窗口，标准输入的默认设备是键盘输入
 - I/O重定向
   - `> file`： 把标准输出重定向到文件，会将文件内容覆盖    
-  - `2> file`：把标准错误重定向到文件     
+  - `2> file`：把标准错误重定向到文件
   - `&> file`：把标准输出以及标准错误都重定向到文件
   - `set -C` ：禁止覆盖文件内容，换成追加模式
   - `set +C` ：允许覆盖文件内容
@@ -210,7 +212,8 @@
 - 管道：`cmd1 | cmd2` 将命令1的标准输出发送给命令2的标准输入，要求cmd1有标准输出
 - 标准错误洗白：`2>&1`表示将标准错误转成标准输出，一般用法：`cmd >/dev/null 2>&1`
 - 同时重定向：`cmd1 |& cmd2`表示将标准输出以及标准错误都作为cmd2的标准输入
-- 重定向到多处： `cmd |tee log` 将标准输出重定向到log文件以及终端 
+- 重定向到多处： `cmd |tee log` 将标准输出重定向到log文件以及终端
+	- `tee`: 从标准输出获取内容传给log文件
 - ls /proc/$$/fd 可以显示终端对应的编号信息
 
 ***
