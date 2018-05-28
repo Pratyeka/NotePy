@@ -97,3 +97,53 @@
     - 使用with...as关键字管理文件的打开关闭
     - 上下文管理的语句块不会开启新的作用域
     - with语句块执行完的时候，会自动关闭文件对象
+
+***
+### 栗子栗子
+- 实现文件内容的拷贝
+```python
+    def copy(source, dest, encoding = 'utf-8'):
+        with open(source, encoding=encoding) as f:
+            file = f.read()
+        with open(dest, mode='w+', encoding=encoding) as f:
+            f.write(file)
+
+    if __name__ == '__main__':
+        file_ori = 'doc/sample.txt'
+        file_cpy = 'doc/sampla.txt'
+        copy(file_ori, file_cpy, 'utf-8')
+
+    with open(file_cpy,encoding='utf-8') as f:
+        print(f.read())
+```
+
+- 统计一个文件中单词的数量，并输出排名前十的单词统计数据
+```python
+    CHARS = set(""",.[]()-+"'/\*&%#$@` \t\n\r""")
+
+    def make_key(line):
+        start = 0
+        line = line.lower()
+        for i, char in enumerate(line):
+            if char in CHARS:
+                if start != i:
+                    yield line[start:i]
+                start = i + 1
+
+    def word_count(file, encoding):
+        count = {}
+        with open(file, mode='r', encoding=encoding) as f:
+            for line in f:
+                for name in make_key(line):
+                    count[name] = count.get(name, 0) + 1
+        return count
+
+    def topn(count, num):
+        lst = sorted(count.items(), key=lambda x:x[1], reverse=True)
+        for i in range(num):
+            print(lst[i])
+
+    file_ori = 'doc/sample.txt'
+    count_dict = word_count(file_ori, 'utf-8')
+    topn(count_dict, 10)
+```
