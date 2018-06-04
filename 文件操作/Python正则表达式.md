@@ -150,5 +150,26 @@
     print(7, result.groups())
     print(8, result.groupdict())
 ```
+- 字符串信息提取，并做格式化处理
+```Python
+    from datetime import datetime
+    import re
 
-    
+    message = '''183.60.212.153 - - [19/Feb/2013:10:23:29 +0800] \
+    "GET /o2o/media.html?menu=3 HTTP/1.1" 200 16691 "-" \
+    "Mozilla/5.0 (compatible; EasouSpider; +http://www.easou.com/search/spider.html)"'''
+
+    pattern = '(?P<remote>[\d.]{7,}) - - \[(?P<datetime>[/\w:+ ]+)\]\s+' \
+            '"(?P<method>\w+) (?P<url>\S+) (?P<protocol>[\w/\.]+)"\s+' \
+            '(?P<status>\d+) (?P<length>\d+) "-"\s+"(?P<useragent>.+)"'
+    regex = re.compile(pattern)
+    time_conv = lambda str_time: datetime.strptime(str_time, '%d/%b/%Y:%H:%M:%S %z')
+    ops = {'datetime':time_conv, 'status':int, 'length':int}
+
+    matcher = regex.match(message)
+    if matcher:
+        resdic = {k:ops.get(k,lambda x:x)(v) for k,v in matcher.groupdict().items()}
+        print(resdic)
+    else:
+        raise Exception("NO MATCH")
+```
