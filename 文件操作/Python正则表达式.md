@@ -47,3 +47,108 @@
     - `re.S`: 表示单行模式
     - `re.X`: 表示忽略表达式中的空白符
 - ***注意：单行模式时，'.'符号可以匹配所有字符（包括换行符）***
+
+- 栗子
+```
+    匹配1-3位的数字：^([1-9]\d\d?|\d)\D
+    匹配IP地址：^(?:\d{1,3}\.){3}(?:\d{1,3})，需要Py的进一步判定
+```
+
+### Python正则模块re
+- 常量
+    - 多行模式：`re.M`
+    - 单行模式：`re.S`
+    - 忽略大小写：`re.I`
+    - 忽略表达式中的空白字符：`re.X`
+- 注：使用`|`运算符开启多种选项
+
+#### 方法
+- 编译：`re.complie(pattern, flags=0)`
+    - pattern就是正则表达式字符串，flags是编译模式
+    - 返回一个regex
+    - 正则表达式需要被编译，编译后的结果保存使用，可以提高效率
+        - re的其他方法都调用了编译方法，为了提速
+- 单次匹配
+    - match
+        - 可用方法：
+            - `re.match(pattern, string, flags=0)`
+            - `regex.match(string [,pos [,endpos]])`
+        - match匹配从字符串的开头匹配，首字母不一样直接返回None
+        - 完成匹配时返回Match对象
+    - search
+        - 可用方法：
+            - `re.search(pattern, string, flags=0)`
+            - `regex.search(string [,pos [,endpos]])`
+        - 在string中搜索到第一个匹配的模式
+        - 返回match对象
+    - fullmatch
+        - 可用方法：
+            - `re.fullmatch(pattern, string, flags=0)`
+            - `regex.fullmatch(string [,pos [,endpos]])`
+        - 要求整个字符串和正则表达式匹配
+        - 返回match对象
+- 全文搜索
+    - findall
+        - 可用方法：
+            - `re.findall(pattern, string, flags=0)`
+            - `regex.findall(string [,pos [,endpos]])`
+        - 对整个字符串从左到右匹配
+        - 返回所有匹配项的列表（列表元素是字符串）
+    - finditer
+        - 可用方法
+            - `re.finditer(pattern, string, flags=0)`
+            - `regex.finditer(sting [,pos [,endpos]])`
+        - 对整个字符串从左到右匹配
+        - 返回迭代器，每次迭代返回的是match对象
+- 匹配替换
+    - sub
+        - 可用方法：
+            - `re.sub(pattern, replacement, string, count=0, flags=0)`
+            - `regex.sub(replacement, string, count=0)`
+        - 使用pattern对字符串string进行匹配，对匹配项使用repl替换
+        - 返回替换后的字符串
+        - count指定提换的次数
+        - replacement可以是string，bytes，functions
+    - subn
+        - 可用方法：
+            - `re.subn(pattern, replacement, string, count=0, flags=0)`
+            - `regex.subn(replacement, string, count=0)`
+        - 同sub返回一个元祖：（new_string, number_of_subs_made）
+        - count指定替换的次数
+- 分割字符串
+    - `注：字符串的分割函数，不能指定多个字符进行分割`
+    - split
+        - 可用方法：
+            - `re.split(pattern, string, maxsplit=0, flags=0)`
+    - 可以一次指定多个分割字符
+    - 返回值为列表
+- 分组
+    - 使用小括号的pattern捕获的数据被放到了组group中
+    - 如果pattern中使用了分组，如果有匹配的结果，会在match对象中
+        1. 使用group(N)方式返回对应的分组   
+            - 1-N是对应的分组，0返回匹配到的整个分组
+        2. 如果使用了命名分组，可以使用group('name')的方式取分组
+        3. 也可以使用groups()返回所有分组
+        4. 使用groupdict()返回所有命名分组
+```python
+    import re
+
+    s = '''bottle\nbag\nbig\napple'''
+    regex = re.compile('(b\w+)')
+    result = regex.match(s)
+    print(1, 'match', result.groups())
+
+    result = regex.search(s, 1)
+    print(2, 'search', result.groups())
+
+    regex = re.compile('(b\w+)\n(?P<name2>b\w+)\n(?P<name3>b\w+)')
+    result = regex.match(s)
+    print(3, 'match', result, type(result.groupdict()))
+    print(4, result.group(3), result.group(2), result.group(1))
+    print(5, result.group(0).encode())
+    print(6, result.group('name2'))
+    print(7, result.groups())
+    print(8, result.groupdict())
+```
+
+    
