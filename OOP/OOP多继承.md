@@ -107,3 +107,63 @@
     - Mixin类通常不单独工作，一般用来混入别的类中实现部分功能
     - Mixin类的祖先类也应该是Mixin类
     - Mixin类通常放在继承列表的第一位(通过mro方法，解决多继承的二义性)
+
+### 抽象基类、Mixin方法栗子
+```Py
+    import math
+    import json
+
+    class Shape:
+        def __init__(self, shape):
+            self.shape = shape
+
+        def area(self):
+            raise NotImplementedError()
+
+        def ser(self):
+            raise NotImplementedError()
+
+    class Triangle(Shape):
+        def __init__(self, shape, a, b, c):
+            super().__init__(shape)
+            self.a = a
+            self.b = b
+            self.c = c
+
+        def area(self):
+            return self.a * self.b * self.c
+
+    class Circle(Shape):
+        def __init__(self,shape, radius):
+            super().__init__(shape)
+            self.radius = radius
+
+        def area(self):
+            return math.pi * self.radius * self.radius
+
+    class Rectangle(Shape):
+        def __init__(self, shape, a, b):
+            super().__init__(shape)
+            self.a = a
+            self.b = b
+
+        def area(self):
+            return self.a * self.b
+
+    class SerMixin:
+        def dumps(self):
+            return json.dumps(self.__dict__)
+
+    class SerRectangle(SerMixin, Rectangle):
+        pass
+
+    class SerTriangle(SerMixin, Triangle):
+        pass
+
+    class SerCircle(SerMixin, Circle):
+        pass
+
+    sercircle = SerCircle('circle', 10)
+    print(sercircle.area())
+    print(sercircle.dumps())
+```
