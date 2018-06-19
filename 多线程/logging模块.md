@@ -102,7 +102,7 @@
 
 - logger级别设置
     - logger在创建时，都有等效的level（默认为0）
-        - 如果设置了level，就用来个日志级别比较
+        - 如果设置了level，就用该日志级别比较
         - 如果没有使用setlevel来设置level，按照父类的level控制日志打印
     - logger可以使用`setlevel(num)`来设置自身的日志级别
     - *注：level属性的继承是一条线*
@@ -135,7 +135,7 @@
     - 包括两种处理类
         - `FileHandler`: 文件处理函数
         - `StreamHandler`：字符流处理函数
-    - 在basicConfig根据是否提供文件名，采取两种操作模式
+    - 在basicConfig根据是否提供文件名(Filename)，采取两种操作模式
         - 有文件名时，使用FileHandler处理
         - 没有文件名是，使用StreamHandler处理，默认到标准输出
     - 使用如下语句给logger实例添加Handler

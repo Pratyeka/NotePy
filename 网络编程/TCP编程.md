@@ -10,13 +10,16 @@
     - `SOCK_DGRAM`:  无连接的数据报文套接字，UDP协议
 
 ### TCP编程
-- Socket编程，包括服务端和客户端两部分
+- TCP的Socket编程，包括服务端和客户端两部分
+
 #### TCP服务器端
 - TCP服务端编程步骤：
     1. 创建socket对象（Socket.socket()）
     2. 绑定IP地址和端口号（bind((add,port))）
         - 要求参数是一个元祖
+        - 还没有占用端口
     3. 开始监听（listen()）
+        - 正式占用端口
     4. 获取用来传送数据的socket对象（accept()）
         - 返回值是一个socket对象*rsocket*和raddr组成的元祖
         - raddr是客户端的ip地址个端口号组成的元祖
