@@ -46,7 +46,7 @@
             print("A.__get__ {} {} {}".format(self, instance, owner))
 
     class B:
-        x = A()      # 定义时调用A类的__init__函数
+        x = A()                           # 定义时调用A类的__init__函数
         def __init__(self):
             print('B.init() ----')
 
