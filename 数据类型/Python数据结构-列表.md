@@ -26,7 +26,7 @@
   - `list.index(value [,start [,end]])`：在列表中查询value第一次出现的位置，可以指定起止索引值 [start, end)
   - 起止索引默认从左到右
   - 匹配不到value值，会抛出ValueError异常
-  - 时间复杂度：`O(n)`      
+  - 时间复杂度：`O(n)`
 - 列表元素计数  ( **不推荐使用**)
   -  `list.count(value)`：查询列表中value出现的总次数
   - 时间复杂度：`O(n)`  
