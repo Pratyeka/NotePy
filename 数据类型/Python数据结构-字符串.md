@@ -3,12 +3,12 @@
 - 是由一个个字符组成的有序的序列，是字符的集合
 
 ### 字符串的初始化 ###
-- sName = 'string'
-- sName = "string"
-- sName = ''' string '''   （多行字符串，可以用来作为多行注释）
-- sName = str(object)：使用str()转换为字符串类型
+- `sName = 'string'`
+- `sName = "string"`
+- `sName = ''' string '''`   （多行字符串，可以用来作为多行注释）
+- `sName = str(object)`：使用str()转换为字符串类型
   - 将object直接转换成字符串类型而不是采用可迭代的方式
-- sName = ''.join(iterable) ：使用可迭代对象新建字符串（可迭代对象的元素都是字符串类型）
+- `sName = ''.join(iterable)`：使用可迭代对象新建字符串（可迭代对象的元素都是字符串类型）
 - 在字符串内可以使用转义字符
 
 ### 字符串的访问 ###
@@ -28,7 +28,7 @@
 - 字符串分割 (split 系列)
   - `str.split(sep='' , maxsplit=-1)`：将字符串按指定分隔符分割
     - 返回为列表
-    - sep 指定分隔符，默认是使用 **空白字符串（可以是多个空白符一起）** 作为分隔符
+    - sep 指定分隔符，默认是使用 **空白字符串(可以是多个空白符一起)** 作为分隔符
     - 可以指定最大分割次数（默认是全部分割）
     - 方向是从左到右
     - 在分隔符前没有内容：会返回一个空字符串
@@ -44,11 +44,20 @@
 - 字符串分割 （partition系列）
   - `str.partition(sep)`：按照sep指定的分隔符将str分割成两部分
     - 返回的是一个元祖类型
-    - 必须指定分隔符，并且不能为空
+    - 必须指定分隔符，并且不能为空字符串
     - 遇到第一个分隔符，就将字符串分割为 头、分隔符、尾构成的三元组，后面的忽略
     - 没有遇到分隔符，返回由字符串、空白、空白构成的三元组
     - 从左到右的顺序
   - `str.rpartition(sep)`：同上，反向而已
+```Python
+  slst = 'judst do it'.split('d', maxsplit=1)
+  print(slst)
+  slst = 'just do it'.partition('do')
+  print(slst)
+  slist = 'just do it\n just\n do it'.splitlines(keepends=True)
+  print(slist)
+```
+
 - 字符串大小写
   - `str.upper()` ：小写字符转大写
   - `str.lower()` ：大写字符转小写
@@ -67,6 +76,24 @@
     - 返回新字符串
   - `rjust(width [,fillchar])`：右对齐，使用fillchar字符串来填充
     - 返回新字符串
+
+```Python
+  ustr = 'just do it'.upper()
+  print(ustr)
+  lstr = 'Just Do IT'.lower()
+  print(lstr)
+  sstr = 'Just Do IT'.swapcase()
+  print(sstr)
+  wstr = 'just do it'.center(33,"*")
+  print(wstr)
+  zstr = 'just do it'.zfill(20)
+  print(zstr)
+  rstr = 'just do it'.replace('j', 'r')
+  print(rstr)
+  sstrip = 'just do it'.strip('ti')
+  print(sstrip)
+```
+
 ***
 ### 字符串修改 ###
   - `str.replace(old, new [, count])` ： 使用新的字符串替换旧字符串
