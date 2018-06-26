@@ -148,3 +148,46 @@
     - `fName(**arg)` 解构字典对象
         - 要求形参个数与实参个数相匹配
         - 要求实参字典的关键字与形参的关键字匹配
+
+
+### 栗子s
+- 至少接受两个参数，返回最大值和最小值
+```Python
+    def maxmin(*args):
+        if len(args) < 2:
+            print('input more 2 params')
+        else:
+            lst = sorted(args)
+            print('max = {}'.format(lst[-1]))
+            print('min = {}'.format(lst[0]))
+
+    maxmin(1,3,4,453,45,-1)
+```
+
+- 接受参数n，输出数字组成的三角阵
+- 正三角
+```Python
+    def trian(nums):
+        last = ' '.join([str(i) for i in range(nums, 0, -1)])
+        length = len(last)
+
+        for i in range(1, nums):
+            lst = [str(i) for i in range(i,0,-1)]
+            print('{:>{}}'.format(' '.join(lst), length))
+        print(last)
+
+    trian(12)
+```
+- 倒三角
+```Python
+    def trian(nums):
+        first = ' '.join([str(i) for i in range(nums, 0, -1)])
+        length = len(first)
+
+        print(first)
+        for i in range(1, nums):
+            lst = [str(i) for i in range(nums-i,0,-1)]
+            print('{:>{}}'.format(' '.join(lst), length))
+
+    trian(12)
+```
