@@ -1,0 +1,129 @@
+文件夹 PATH 列表
+卷序列号为 0002-6EAD
+D:.
+│  .gitignore
+│  filetree.txt
+│  README.md
+│  常用模块.md
+│  
+├─NoPy
+│      chapter03Python考题.txt
+│      linux.md
+│      linux.txt
+│      
+├─OOP
+│      OOP单继承.md
+│      OOP多继承.md
+│      OOP描述器.md
+│      oop概述.md
+│      OOP魔术方法_上.md
+│      OOP魔术方法_下.md
+│      OOP魔术方法_反射.md
+│      
+├─web开发
+│      web开发基本概念.md
+│      类Flask框架的简单实现.md
+│      
+├─函数
+│      Python函数作用域.md   
+			函数返回值
+			参数的作用域
+			参数访问规矩
+			自由变量与闭包
+			global/nonlocal
+			缺省值的作用域
+			参数销毁
+│      Python函数定义.md
+			函数作用
+			函数基本格式
+			位置参数
+			缺省参数
+			可变位置参数
+			kw-only参数
+			可变关键字参数
+			参数结构
+│      Python匿名函数.md
+│      Python封装与解构.md
+			封装
+			解构
+			丢弃变量
+│      内建函数.md
+			三元运算符：v1 if cond else v2
+			print
+			len
+			max/min
+			divmod
+			enumerate
+			zip
+			abs
+			input
+			id
+			hash
+			type
+			isinstance
+			issubclass
+			range
+			sum
+			ord
+			chr
+			sorted
+			reversed
+			iter
+			next			
+│      参数注解.md
+│      解析式和生成器.md
+			列表解析式
+			生成器表达式
+			生成器函数
+			集合解析式
+			字典解析式	
+			
+│      迭代器.md
+│      高阶函数and装饰器.md
+│      
+├─多线程
+│      logging模块.md
+│      多进程.md
+│      并行和并发.md
+│      线程同步.md
+│      
+├─数据库入门
+│      Mysql基本命令.md
+│      sqlalchemy编程.md
+│      元编程.md
+│      数据库开发.md
+│      
+├─数据类型
+│      Python数据结构-元祖.md
+│      Python数据结构-列表.md
+│      Python数据结构-字典.md
+│      Python数据结构-字符串.md
+│      Python数据结构-字节.md
+│      Python数据结构-集合.md
+│      Python格式化打印字符串.md
+│      数值处理.md
+│      
+├─文件操作
+│      csv&ini文件.md
+│      Python正则表达式.md
+│      StringIO和BytesIO.md
+│      文件IO.md
+│      文件属性.md
+│      文件序列化.md
+│      生产者消费者模型.md
+│      路径操作.md
+│      
+├─网络编程
+│      sockerserver.md
+│      TCP编程.md
+│      UDP编程.md
+│      异步编程.md
+│      网络基本知识1.md
+│      
+└─项目管理
+        Git & Github.md
+        gogs搭建git私服.md
+        包管理.md
+        异常处理.md
+        模块化.md
+        
