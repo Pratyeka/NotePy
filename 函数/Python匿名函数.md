@@ -128,3 +128,34 @@
 
     print(monkey())
 ```
+
+- 将一个字典扁平化
+    - 一个无法统一确定循环层级的问题，一般使用递归处理
+```Python
+    def dict_flat(inputs, name = None, dit={}):
+        if not isinstance(inputs, (dict, list, tuple)):
+            dit.update({name:inputs})
+        else:
+            for k,v in inputs.items():
+                names = name + '.' + k if name else k
+                dict_flat(v, names, dit)
+
+    ori_dict = {'a':{'b':1,'c':2}, 'd':{'e':3,'f':{'g':4}}}
+    flat_dict = {}
+    dict_flat(ori_dict, None, flat_dict)
+    print(flat_dict)    # {'a.b': 1, 'a.c': 2, 'd.e': 3, 'd.f.g': 4}
+ 
+    def flat(dic, name, pdd=[]):
+        if isinstance(dic,dict):
+            for k,v in dic.items():
+                names = name + k + '.'
+                flat(v, names, pdd)
+        else:
+            names = name + str(dic)
+            pdd.append(names)
+
+    lst = []
+    orid = {'a':{'b':1, 'c':2}, 'd':{'e':3, 'f':{'g':4}}}
+    flat(orid, '', lst)
+    print(lst)   # ['a.b.1', 'a.c.2', 'd.e.3', 'd.f.g.4']
+```
