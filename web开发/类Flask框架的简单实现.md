@@ -532,3 +532,150 @@
         server = make_server(ip, port, App())
         server.serve_forever()
 ```
+
+### 路径注册（正则简化）
+- 使用正则表达式来完成路径->handler的映射，可以增加注册的灵活性，但是不友好
+    - 需要简化正则的书写
+    - 生产环境中的URL是有意义的，不能随便书写，尤其对restful风格的URL
+- 基于以上两点不足：需要规范路径
+    - 建立固定格式到标准正则表达式的映射关系
+    - 这样的映射关系简化了用户定义、也规范了URL的形式
+- 还有就是映射关系中的类型转换函数需要被记录 
+
+```Python
+    import re
+    from wsgiref.simple_server import make_server
+    from webob.dec import wsgify
+    from webob import Response,Request
+    from webob.exc import HTTPNotFound
+
+    class AttrDict:
+        def __init__(self, d:dict):
+            self.__dict__.update(d)
+
+        def __setattr__(self, key, value):
+            raise NotImplementedError
+
+        def __getattr__(self, item):
+            return "missing {}".format(item)
+
+        def __repr__(self):
+            return "<AttrDict {}>".format(self.__dict__)
+
+    class Router:
+        REGEX = re.compile(r'/{([^{}:]+):?([^{}:]*)}')
+        TYPETRANSTABLE = {
+            'str': r'[^/]+',
+            'word': r'\w+',
+            'int': r'[+-]?\d+',
+            'float': r'[+-]?\d+\.\d+',
+            'any': r'.+'
+        }
+
+        TYPECHAR = {
+            'str': str,
+            'word': str,
+            'int': int,
+            'float': float,
+            'any': str
+        }
+
+        def __init__(self, prefix):
+            self._prefix = prefix
+            self._routertable = []
+
+        # def _repl(self, matcher):
+        #     name = matcher.group(1)
+        #     typp = matcher.group(2)
+        #     return '/(?P<{}>{})'.format(name,
+        #         self.TYPETRANSTABLE.get(typp,r'[^/]+'))
+
+        # 固定字符串到正则字符串的映射 并返回类型转换函数
+        def _parse(self, path):
+            start = 0
+            rest = ''
+            typps = {}
+            for matcher in self.REGEX.finditer(path):
+                name = matcher.group(1)
+                typp = matcher.group(2)
+                typps[name] = self.TYPECHAR.get(typp, str)
+                rest += path[start:matcher.start()]
+                tmp = '/(?P<{}>{})'.format(name, self.TYPETRANSTABLE.get(typp, str))
+                rest += tmp
+                start = matcher.end()
+            print(rest+path[start:])
+            return rest+path[start:], typps
+
+        def register(self, path, *method):
+            def inc(handler):
+                pattern, funcs = self._parse(path)
+                self._routertable.append((re.compile(pattern), handler, method, funcs))
+                return handler
+            return inc
+
+        def match(self, request):
+            path = request.path.replace(self._prefix,'')
+            method = request.method
+            for repath, handler, methods, funcs in self._routertable:
+                if not methods or method in methods:
+                    matcher = repath.match(path)
+                    if matcher:
+                        request.group = matcher.groups()
+                        request.groupdict = AttrDict(matcher.groupdict())
+                        return handler(request,funcs)
+            return None
+
+    class App:
+        _Router = []
+
+        @wsgify
+        def __call__(self, request: Request) -> Response:
+            # 根据路径选择对应的handler
+            for router in self._Router:
+                ret = router.match(request)
+                if not ret:
+                    continue
+                else:
+                    return ret
+            raise HTTPNotFound('DID NOT FOUND THE WEB')
+
+        @classmethod
+        def register(cls, *args):
+            cls._Router.extend(args)
+
+    index = Router('/index')
+    hupu = Router('/hupu')
+    nba = Router('/nba')
+
+    App.register(index, hupu, nba)
+
+    @index.register(r'^/{id:str}$', 'GET')
+    def indexhandler(request, funcs):
+        idd = funcs['id'](request.groupdict.id)
+        return 'indexhandler----- {}'.format(idd)
+
+    @hupu.register(r'^/{id:str}$', 'POST')
+    def hupuhandler(request, funcs):
+        idd = funcs['id'](request.groupdict.id)
+        return 'hupuhandler----- {}'.format(idd)
+
+    @nba.register(r'^/{id:str}$', 'POST', 'GET')
+    def hupuhandler(request, funcs):
+        idd = funcs['id'](request.groupdict.id)
+        return 'nbahandler----- {}'.format(idd)
+
+    if __name__ == '__main__':
+        ip = '127.0.0.1'
+        port = 10006
+        server = make_server(ip, port, App())
+        server.serve_forever()
+```
+
+### 框架处理流程
+1. 客户端发来HTTP请求，被WSGI服务器处理后传递给APP的__call__函数
+2. App中遍历已经注册的Router实例，Router实例调用match函数
+    - 如果可以处理，调用对应的handler函数处理，返回Response实例
+    - 不处理，返回去None，继续执行2
+    - 如果没有任何实例响应，抛出HTTPNOTFOUND异常
+3. 将handler返回的数据填入到HTML中，将新生成的HTML字符串返回客户端，就是网页
+    - 称为模板技术
