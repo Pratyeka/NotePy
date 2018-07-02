@@ -78,6 +78,7 @@
     - `DEFAULT`是缺省的section的名字，必须大写
     - `section`称为节、区、段
     - 每个section的内容都是由键值对构成，其中key称为option
+- 可以把ini配置文件当做一个嵌套的字典，默认使用的是有序字典
 
 #### configparse模块
 - 模块导入：`from configparser import ConfigParse`
@@ -92,24 +93,25 @@
 - `read(inifiles, encoding=None)`:读取ini文件
     - `inifiles`: 可以是多个ini文件组成的文件列表
     - `encoding`: 可以指定文件编码
-- `section()`: 返回一个由section名组成的列表，不包括缺省的section在内
+- `sections()`: 返回一个由section名组成的列表，不包括缺省的section在内
 - `add_section(section_name)`: 增加一个section
 - `has_section(section_name)`: 判定section是否存在
-- `options(section)`: 返回指定section中所有option，包括缺省的option在内
+- `options(section)`: 返回指定section中所有option，会追加缺省section的option
 - `has_option(section,option)`: 判定section是否存在这个option
 - `get(section, option)`: 从指定的字段上取值，如果没有找到就去DEFAULT中查找
 - `getint(sectin, option)`: 将返回结果从str转为int
 - `getfloat(sectin, option)`: 将返回结果从str转为float
 - `getboolean(sectin, option)`: 将返回结果从str转为boolean
 - `items([section])`
-    - section省略，返回所有section名字及其对象
-    - section不省略，返回这个指定section的键值对组成的二元组
+    - section省略，返回视图对象
+    - section不省略，返回列表，列表元素是有option和value组成的二元组
 - `set(section, option, value)`:写入option=value键值对
     - 要求section必须存在
     - 要求option、value必须是字符串
 - `remove_section(section)`: 移除section及其所有option
-- `remove_option(section, option)`: 移除section下的所有option
+- `remove_option(section, option)`: 移除section下指定的option
 - `write(fileobject)`: 将当前config的内容写入fileobject中
+    - 要求fileobject是可写的文件流对象
 
 - *注：* cfg可以按照字典操作：
     - `cfg[section][option]`: 读取数值
@@ -129,5 +131,30 @@
     print(cfg['mysection']['abd'])
 
     with open(str(newfile), mode='w') as f:
+        cfg.write(f)
+```
+```Python
+    import os
+    from configparser import ConfigParser
+
+    cfg = ConfigParser()
+    cfg.read('./doc/logs/new.ini')
+    print(cfg.sections())
+    print(cfg.has_section('mysql'))
+    print(cfg.options('mysql'))
+    print(cfg.get('mysql', 'a'))
+    print(cfg.items('mysql'))
+    print(tuple(cfg.items()))
+    cfg.set('mysql', 'kkk', '10000')
+    print(cfg.options('mysql'))
+    cfg.add_section('json')
+    print(cfg.sections())
+    cfg.remove_section('json')
+    print(cfg.sections())
+    cfg.remove_option('mysql', 'a')
+    print(cfg.options('mysql'))
+
+
+    with open('./doc/mi.ini', encoding='UTF-8', mode='w') as f:
         cfg.write(f)
 ```
