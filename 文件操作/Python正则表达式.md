@@ -115,6 +115,40 @@
             - `regex.subn(replacement, string, count=0)`
         - 同sub返回一个元祖：（new_string, number_of_subs_made）
         - count指定替换的次数
+```Python
+    import re
+
+    # 使用string进行替换
+    pattern = r'\d+'
+    repl = 'xiaomi'
+    src = 'welcome 123 to 456'
+    regex = re.compile(pattern)
+    dest = regex.sub(repl, src)
+    print(dest)
+
+    # DEGUG
+    print('+' * 30)
+
+    # 使用一个函数来完成匹配替换操作
+    TYPEPATTERNS = {
+        'str': r'[^/]+',
+        'word': r'\w+',
+        'int': r'[+-]?\d+',
+        'float': r'[+-]?\d+\.\d+',
+        'any': r'.+'
+    }
+
+    def repl(matcher):
+        return '/(?P<{}>){}'.format( matcher.group(1),
+            TYPEPATTERNS.get(matcher.group(2), r'[^/]+'))
+
+    pattern = r'/{([^{}]+):([^{}]*)}'
+    src = '/student/{name:str}/***/{id:int}/{age:}'
+    regex = re.compile(pattern)
+    dest = regex.sub(repl, src)
+    print(dest)
+```
+
 - 分割字符串
     - `注：字符串的分割函数，不能指定多个字符进行分割`
     - split
