@@ -1,7 +1,8 @@
-### 正则表达式 ###
+### 正则表达式
+- 正则表达式是文本处理极为重要的技术
 - 用途：对字符串按照某种规则进行检索、替换
 
-##### 基本语法 ####
+##### 基本语法
 - 元字符：
     - `.`: 可以用来表示除了换行符之外的任一字符
     - `[abc]`: 字符集，可以用来表示字符集中的任一字符
@@ -18,7 +19,7 @@
     - `\B`: 表示不匹配单词的边界
     - `^`: 表示字符串的行首
     - `$`: 表示字符串的行尾
-- ***注意：如果在正则表达式中有特殊意义，在使用时需要使用转义符***
+- ***注意：如果在正则表达式中有特殊意义，在使用时需要使用转义符\***
 
 - 字符重复
     - `*`: 表示前面的字符可以重复至少0次
@@ -27,12 +28,12 @@
     - `{n}`: 表示前面的字符重复n次
     - `{n,}`: 表示前面的字符重复至少n次
     - `{m,n}`: 前面的字符重复次数区间为：[m,n]
-- ***注意：字符的重复是指模式的重复***
+- ***注意：字符重复是指模式的重复***
 
 - 分组与断言
     - `x|y`: 表示匹配x或者y
     - `(pattern)`: 表示一个分组，自动按顺序给编号
-    - `\num`: 表示引用标号为num的分组（引用内容不是模式）
+    - `\num`: 表示引用标号为num的分组（**引用内容不是模式**）
     - `(?:pattern)`: 取消分组,表示括号用于指定优先级
     - `(?<name>pattern)`: 命名分组，python中使用`(?P<name>pattern)`
     - `f(?=pattern)`: 表示在f后一定有pattern
@@ -49,7 +50,7 @@
 - ***注意：单行模式时，'.'符号可以匹配所有字符（包括换行符）***
 
 - 栗子
-```
+```Re
     匹配1-3位的数字：^([1-9]\d\d?|\d)\D
     匹配IP地址：^(?:\d{1,3}\.){3}(?:\d{1,3})，需要Py的进一步判定
 ```
@@ -64,7 +65,7 @@
 
 #### 方法
 - 编译：`re.complie(pattern, flags=0)`
-    - pattern就是正则表达式字符串，flags是编译模式
+    - pattern是待匹配的*正则表达式字符串*，flags是编译模式
     - 返回一个regex
     - 正则表达式需要被编译，编译后的结果保存使用，可以提高效率
         - re的其他方法都调用了编译方法，为了提速
@@ -73,19 +74,19 @@
         - 可用方法：
             - `re.match(pattern, string, flags=0)`
             - `regex.match(string [,pos [,endpos]])`
-        - match匹配从字符串的开头匹配，首字母不一样直接返回None
-        - 完成匹配时返回Match对象
+        - match匹配*从字符串的开头*匹配，首字母不一样直接返回None
+        - 完成匹配时返回match对象
     - search
         - 可用方法：
             - `re.search(pattern, string, flags=0)`
             - `regex.search(string [,pos [,endpos]])`
-        - 在string中搜索到第一个匹配的模式
+        - 在string中搜索直到第一个匹配的字符串
         - 返回match对象
     - fullmatch
         - 可用方法：
             - `re.fullmatch(pattern, string, flags=0)`
             - `regex.fullmatch(string [,pos [,endpos]])`
-        - 要求整个字符串和正则表达式匹配
+        - *要求整个字符串和正则表达式匹配*
         - 返回match对象
 - 全文搜索
     - findall
@@ -93,27 +94,29 @@
             - `re.findall(pattern, string, flags=0)`
             - `regex.findall(string [,pos [,endpos]])`
         - 对整个字符串从左到右匹配
-        - 返回所有匹配项的列表（列表元素是字符串）
+        - 返回所有匹配字符串构成的*列表*（列表元素是字符串）
     - finditer
         - 可用方法
             - `re.finditer(pattern, string, flags=0)`
             - `regex.finditer(sting [,pos [,endpos]])`
         - 对整个字符串从左到右匹配
-        - 返回迭代器，每次迭代返回的是match对象
+        - *返回迭代器*，迭代器对应的元素是match对象
 - 匹配替换
     - sub
         - 可用方法：
-            - `re.sub(pattern, replacement, string, count=0, flags=0)`
-            - `regex.sub(replacement, string, count=0)`
-        - 使用pattern对字符串string进行匹配，对匹配项使用repl替换
+            - `re.sub(pattern, repl, string, count=0, flags=0)`
+            - `regex.sub(repl, string, count=0)`
+        - 使用pattern对字符串string进行匹配，对匹配项使用*repl*替换
         - 返回替换后的字符串
-        - count指定提换的次数
-        - replacement可以是string，bytes，functions
+        - count指定替换的次数
+        - *repl可以是string，bytes，可调用对象*
     - subn
         - 可用方法：
-            - `re.subn(pattern, replacement, string, count=0, flags=0)`
-            - `regex.subn(replacement, string, count=0)`
-        - 同sub返回一个元祖：（new_string, number_of_subs_made）
+            - `re.subn(pattern, repl, string, count=0, flags=0)`
+            - `regex.subn(repl, string, count=0)`
+        - 返回一个元祖：（new_string, number_of_subs_made）
+            - new_string：字符串被替换后的字符串
+            - number：字符串替换发生的次数
         - count指定替换的次数
 ```Python
     import re
@@ -156,14 +159,29 @@
             - `re.split(pattern, string, maxsplit=0, flags=0)`
     - 可以一次指定多个分割字符
     - 返回值为列表
+
+```Python
+    import re
+
+    s = """01 bottle
+    02 bag
+    03  gig2
+    04      abel"""
+
+    res = re.split('[\s\d]+', s)
+    print(res)
+    # ['', 'bottle', 'bag', 'gig', 'abel']
+```
+
 - 分组
     - 使用小括号的pattern捕获的数据被放到了组group中
     - 如果pattern中使用了分组，如果有匹配的结果，会在match对象中
+    - match对象属性：
         1. 使用group(N)方式返回对应的分组   
-            - 1-N是对应的分组，0返回匹配到的整个分组
+            - 1-N是对应的分组，0返回匹配到的*整个字符串*
         2. 如果使用了命名分组，可以使用group('name')的方式取分组
-        3. 也可以使用groups()返回所有分组
-        4. 使用groupdict()返回所有命名分组
+        3. 也可以使用groups() *返回所有分组*
+        4. 使用groupdict()   *返回所有命名分组*
 ```python
     import re
 
@@ -206,4 +224,27 @@
         print(resdic)
     else:
         raise Exception("NO MATCH")
+```
+
+- 单词统计(正则表达式版本)
+```Python
+    import re
+
+    def word_count(filpath, REGEX):
+        with open(filpath, encoding='UTF-8') as f:
+            count_dict = {}
+            for line in f:
+                for word in REGEX.split(line.lower()):
+                    if word:
+                        count_dict[word] = count_dict.get(word, 0) + 1
+        return count_dict
+
+    def topn(word_dict, num):
+        lst = sorted(word_dict.items(), key=lambda x:x[1], reverse=True)
+        return lst[:num]
+
+    if __name__ == '__main__':
+        filname = './doc/logs/sample.txt'
+        REGEX = re.compile('[^\w-]+')
+        print(topn(word_count(filname,REGEX), 10))
 ```
