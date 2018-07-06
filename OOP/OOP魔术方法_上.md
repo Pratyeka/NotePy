@@ -1,5 +1,5 @@
 ### 特殊属性
-- `__name__` : 函数、类、方法等的名字（字符串）父类中是type的才有
+- `__name__` : 函数、类、方法等的名字（字符串）*父类是type的才有*
 - `__class__`: 类、实例对象的类类型
 - `__doc__`: 函数、类的文档字符串
 - `__module__`: 函数定义、类定义所在的模块名
@@ -74,11 +74,11 @@
 
     print({A('tom'), A('tom')})      # {tom, tom}  为什么没有剔除重复
 ```
-- 因为两个实例的hash一致，根据eq函数判定是否相同，但是eq没有实现，调用object的eq函数，来判断两个实例的ID号来决定是否相同
+- 因为两个实例的hash一致，根据eq函数判定是否相同，但是eq没有实现，调用object的eq函数，按照两个实例的ID号来决定是否相同
 
 - `__eq__(self)`: 返回布尔值，两个对象是否相同
     - 如果类中未定义该函数，object默认使用内存地址判定
-    - 对应符号为： `==`
+    - 对应操作符为： `==`
 ```Python
     class A:
         def __init__(self, name, age=18):
@@ -103,19 +103,19 @@
 - `__bool__(self)`：返回布尔值
     - 内建函数bool()、或者放在逻辑表达式的位置，都会自动调用该函数
     - 如果没有实现该函数，则调用__len__()函数，长度非0为真，反之
-    - 如果两个函数都没有实现，则全部默认为真
+    - *如果两个函数都没有实现，直接返回True*
 
 ####　可视化函数
 - `__repr__(self)`: 返回字符串数据
     - 内建函数调用该函数(repr(obj))，返回该对象的字符串表达
-        - 如果该函数未定义，调用object类的定义：内存地址组成的字符串
+        - 如果该函数未定义，调用object类的定义：*内存地址组成的字符串*
 - `__str__(self)`: 返回字符串数据
     - str(obj)、format(obj)、print(obj)，这三个函数调用返回obj的字符串表达
         - 如果该函数未定义，使用__repr__
         - 如果__repr__也没有实现，调用object的定义：内存地址组成的字符串
     - ***注意***：认真区分函数作用对象，不是以上函数直接作用时，都使用__repr__函数
         - `print([obj1, obj2])`: 使用__repr__风格显示
-- `__bytes__(self)`: 返回bytes表达式
+- `__bytes__(self)`: 返回bytes表达
     - 被bytes(obj)函数调用
 
 
@@ -197,7 +197,7 @@
 - `__setitem__(self, item, value)`: 返回None
     - 给self设置itme.value对
 - `__missing__(self)`:
-    - 字典或者其子类使用__getitme__(self,item)函数时，key不存在的情况下调用该函数
+    - 字典或者其子类使用__getitem__(self,item)函数时，key不存在的情况下调用该函数
 
 ```Python
     class Snack:
@@ -230,7 +230,7 @@
 
         def __setitem__(self, key, value):
             self._len += value
-            self._res[key] = value
+            self._res[key] = self._res.get(key, 0) + value
 
         def __contains__(self, item):
             return item in self._res
