@@ -6,11 +6,11 @@
 
 ### 反射相关的函数和魔术方法
 ***
-####属性获取
-- `getattr(object, name [, default])`: 通过name返回object的属性值。
-    - 属性值不存在时，将使用default返回
+#### 属性获取
+- `getattr(object, name [, default])`: 通过name返回object的属性值
+    - 属性不存在时，将使用default返回
     - 如果不存在default，则抛出AttributeError
-    - 要求name必须是字符串
+    - *要求name必须是字符串*
  - 利用getattr实现命令分发器
  ```Python
     class Dispatcher:
@@ -37,7 +37,7 @@
     - 实例对象的属性搜索顺序为：实例字典->类字典->父类字典s->`__getattr__()`
     - 如果没有查到对应的类属性并且没有`__getattr__`，抛AttributeError异常
     - item 必须是字符串数据
-    - 对类的属性访问不起作用
+    - *对类的属性访问不起作用*
 ```Python
     class Base:
         n = 0
@@ -68,9 +68,9 @@
     - 不存在该属性，增添属性对
 - ***注意***：可以使用该函数给(类/实例)添加函数
     - 给类添加函数，使用方法与类定义中的方法调用方法一致（绑定）
-    - 给实例添加函数，没有实例隐式传参，调用方式：p.foo(p)
+    - *给实例添加函数，没有实例隐式传参，调用方式：p.foo(p)*
         - 手动传入实例对象
-- `__setattr__(self, item, value)`：属性赋值时使用
+- `__setattr__(self, item, value)`：通过.设置属性：self.x=x
     - `__init__()`函数中的`self.c = a`赋值语句会调用__setattr__函数
     - setattr(obj)会调用该魔术方法（小心出现递归）
         - 可以用来拦截对实例属性的增加、修改操作
@@ -107,7 +107,6 @@
     p1.t = 1000 # 添加属性
 ```
 
-
 #### 属性查询
 - `hasattr(object, name)`: 判断对象是否有这个属性
     - name必须是字符串
@@ -117,13 +116,13 @@
     - `__delattr__(self, item)`: 删除实例属性
         - 可以阻止使用实例删除属性的操作，但是通过类依然可以删除属性
 
-- `__getattributer__(self, item)`: 暂时理解为（属性访问符`.`重载）
-    - 属性访问运算符首先会调用该函数
-    - 可以用来拦截对特定属性的访问
-    - 一般建议在方法中用`object.__getattributer__(self, item)`方法（实现正确属性搜索）
-    - 在语句块中主动抛出AttributeError，会直接调用到__getattr__函数
+- `__getattributer__(self, item)`: *暂时理解为（属性访问符`.`重载）*
+    - 属性访问运算首先会调用该函数，返回值作为属性查找的结果
+    - 可以用来拦截对特定属性的访问,抛出AttributeError异常
+    - 在语句块中主动抛出AttributeError，会直接调用到__getattr__函数，表示属性没有查到
     - 如果没有主动抛出AttributError异常，会按照正常的属性搜索顺序访问
-    - 如果在函数中使用了self.name,会出现递归调用
+    - *如果在函数中使用了self.name,会出现递归调用*
+       - 要求使用`object.__getattributer__(self, item)`方法（实现正确属性搜索）
 - *** 注意 ***：
     - 如果不是十分明确`__getattribute__`函数的作用，不建议使用它
 
