@@ -135,7 +135,157 @@
     b.x = 100 # 调用__set__函数
     b.x   # 调用__get__函数
     B.x = 100 # 类属性的覆盖(为什么与实例的赋值不同：帮助说不去调用__set__)
+    b.x = 200 # 没有调用__set__函数，因为x已经不是描述器
 ```
 - 从帮助可知
     - 实例在可以调用__get__、__set__函数
     - 类在访问中可以调用__get__函数，但是不调用__set__函数
+
+
+### 描述器练习
+- 实现Staticmetho装饰器，完成staticmthod装饰器的功能
+```Python
+    class Static:
+        def __init__(self, func):
+            self._func = func
+
+        def __get__(self, instance, owner):
+            return self._func
+
+    class A:
+        @Static
+        def stmtd():
+            print('static method')
+
+    A.stmtd()
+    A().stmtd()
+```
+- 实现Classmethod装饰器，完成classmethod装饰器的功能
+```Python
+    from functools import partial
+
+    class ClassMethod:
+        def __init__(self, func):
+            self._func = func
+
+        def __get__(self, instance, owner):
+            return partial(self._func, owner)
+
+    class A:
+        @ClassMethod
+        def cmethod(cls):
+            print(cls.__name__)
+            
+    A.cmethod()
+    A().cmethod()
+```
+- 实现参数类型检查（类属性版本）
+```Python
+    class Typed:
+        def __init__(self, name, type):
+            self.name = name
+            self.type = type
+
+        def __get__(self, instance, owner):
+            if instance is not None:
+                return instance.__dict__[self.name]
+            return self
+
+        def __set__(self, instance, value):
+            if not isinstance(value, self.type):
+                raise TypeError(value)
+            instance.__dict__[self.name] = value
+
+    class Person:
+        # 将类属性变为数据描述器的方式
+        name = Typed('name', str)
+        age = Typed('age', int)
+
+        def __init__(self, name:str, age:int):
+            self.name = name
+            self.age = age
+
+    p = Person('tom', '20')   # 报错
+    p = Person('jerry', 33)
+```
+- 实现参数类型检查（装饰器添加类属性版本）
+```Python
+    import inspect
+
+    class Typed:
+        def __init__(self, name, type):
+            self.name = name
+            self.type = type
+
+        def __get__(self, instance, owner):
+            if instance is not None:
+                return instance.__dict__[self.name]
+            return self
+
+        def __set__(self, instance, value):
+            if not isinstance(value, self.type):
+                raise TypeError(value)
+            instance.__dict__[self.name] = value
+
+
+    def typecheck(cls):
+        params = inspect.signature(cls).parameters
+        for name,param in params.items():
+            if param.annotation != param.empty:
+                setattr(cls, name, Typed(name, param.annotation))
+        return cls
+
+    @typecheck
+    class Person:
+        # name = Typed('name', str)
+        # age = Typed('age', int)
+
+        def __init__(self, name:str, age:int):
+            self.name = name
+            self.age = age
+
+    # p = Person('tom', '20')   # 报错
+    p = Person('jerry', 33)
+```
+- 参数类型检查（类装饰器版本）
+```Python
+    import inspect
+
+    class Typed:
+        def __init__(self, name, type):
+            self.name = name
+            self.type = type
+
+        def __get__(self, instance, owner):
+            if instance is not None:
+                return instance.__dict__[self.name]
+            return self
+
+        def __set__(self, instance, value):
+            if not isinstance(value, self.type):
+                raise TypeError(value)
+            instance.__dict__[self.name] = value
+
+    class TypeCheck:
+        def __init__(self, cls):
+            self.cls = cls
+            params = inspect.signature(cls).parameters
+            for name, param in params:
+                if param.annotation != param.empty:
+                    setattr(cls, name, Typed(name, param.annotation))
+        
+        def __call__(self, *args, **kwargs):
+            return self.cls(*args,**kwargs)
+
+    @TypeCheck
+    class Person:
+        # name = Typed('name', str)
+        # age = Typed('age', int)
+
+        def __init__(self, name:str, age:int):
+            self.name = name
+            self.age = age
+
+    # p = Person('tom', '20')   # 报错
+    p = Person('jerry', 33)
+```
