@@ -21,7 +21,8 @@
 - 登陆mysql：`mysql -u root -p`
 - 显示数据库：`show databases;`
 - 创建gogs库：`mysql -uroot -p < /home/git/gogs/scripts/mysql.sql`
-- 为gogs库创建用户：`grant all on gogs.* to 'gogs'@'%' identified by 'xdliubin';`  : 最后的字符串是密码
+- 为gogs库创建用户：`grant all on gogs.* to 'gogs'@'%' identified by 'xdliubin';`  
+    - 最后的字符串是密码
 - 切换数据库：`use gogs`
 - 显示数据库内容：`show tables`
 
@@ -34,7 +35,7 @@
 - 创建文件夹: `mkdir custom/conf -p`,
     - 传入配置文件：`cp ../app.ini custom/conf/`
 - 编辑app.ini文件
-```
+```ini
     APP_NAME = xd:lb
     RUN_USER = git
     RUN_MODE = dev
