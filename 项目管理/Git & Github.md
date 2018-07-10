@@ -10,12 +10,27 @@
         - *注意：本地有优先级高于全局的优先级*
     - `git config [--global] user.name Alec Bruks`: 设置本地[全局]用户名
     - `git config [--global] user.email xd@126.com`: 设置本地[全局]用户邮箱
+    - 查看项目的git配置信息：`cat .git/config`
 - 初始化、暂存、提交
     - `git init`: 初始化代码仓库，在当前目录下生成.git目录 = 本地代码仓库
         - `.git`所在的目录就是workspace，一般是项目的根目录
     - `git add <fileName>`: 在暂存区中添加文件，版本库开始跟踪该文件（!=提交）
-    - `git commit -m "message"`: 将暂存区中代码提交提交到分支中
+        - `git add .`: 表示递归添加当前目录及子目录所有文件
+        - `git rm --cached filename`: 将filename从追踪变为未追踪态
+    - `git commit -m "message"`: *将暂存区中代码提交*到当前分支中
         - `-m` 选项表示本次提交的说明
+        - commit提交的是暂存区中的改动，不是物理文件目前的改动
+    - `git commit index.html`: 提交文件到暂存区并提交到版本库
+    - `git commit -a`: 将*所有跟踪文件的改动*自动暂存，然后commit
+    - `git commit --amend`: 修改上一次的提交补充信息
+
+***
+#### git文件分类
+- 追踪的Tracked，已经加入到版本库中的文件
+- 未追踪的UNtracked，未加入到版本库中的文件
+- 忽略的Ignored，git不再关注的文件
+    - .gitignore文件中，目录以/结尾，行开始的！表示取反
+    - Python项目的忽略文件在git找文件
 
 ***
 #### 仓库状态查看
@@ -26,11 +41,15 @@
 #### 文件内容对比
 - `git diff`: 对比暂存区与工作空间文件的修改
     - `git diff HEAD [-- fileName]`: 对比版本库与工作空间文件的修改
+        - HEAD：指代最后一次commit
+        - HEAD^: 指代上一次提交
+        - HEAD^^: 指代上上一次提交
+        - 上n次提交：HEAD~n
     - `git diff --cached`: 对比版本库与暂存区文件的修改
     - `git diff <$id1> <$id2>`: 比较两次提交之间的修改
     - `git diff branch1 branch2`: 比较两个分支最新提交之间的修改
 
-#### checkout
+#### checkout 检出
 - 切换
     - `git checkout branch1`: 切换到分支branch1
         - `git checkout -b name`: 新建并切换分支
@@ -38,10 +57,24 @@
     - `git checkout v1.0`: 切换tag
     - `git checkout commit_id`: 切换到某一次的提交
 - 撤销
+    - `git checkout`: 列出暂存区可以被检出的文件
     - `git checkout [--] filename`: 使用暂存区的文件覆盖工作空间中的文件
         - *注：checkout 命令只能撤销还没有 add 进暂存区的文件*
-    - ` git checkout HEAD^^ sor.py`: 从HEAD前两次提交恢复sor到暂存区和工作空间
+    - `git checkout .`: 检出暂存区的所有文件到工作区
+    - `git checkout HEAD^^ sor.py`: 从HEAD前两次提交恢复sor到暂存区和工作空间
         - *注：HEAD可以指定为某次提交ID*
+
+***
+#### reset 重置
+- `git reset`: 列出将被reset的文件
+- `git reset file` : 将暂存区中的文件恢复到上次的commit状态，工作区不受影响
+- `git reset --hard HEAD^`: 暂存区和工作区文件都恢复到前一次的commit状态
+    - HEAD^: 每个托字符表示回退一级
+    - HEAD~100: 表示退回100次
+- `git reset ID`: 重置当前分支的HEAD为指定ID，同时重置暂存区，工作区不变
+- `git reset --hard ID`: 重置当前分支的HEAD为指定ID，同时重置暂存区与工作区
+- `git reset --keep ID`: 重置当前分支的HEAD为指定ID，暂存区与工作区不变
+- `git reflog`: 显示commit的信息，只要HEAD发生变化，就可以在这里看到
 
 ***
 #### 新建bug分支
@@ -54,7 +87,7 @@
     - `git stash drop`： 删除stash中的内容
 - `git stash clear`: 清空所有暂存区的记录
 
-### Git的分支管理 ###
+### Git的分支管理
 分支方式保证主版本代码的安全与稳定
 - `git branch`: 查看本地仓库中所有的分支
 - `git branch -r`: 查看远程仓库中的所有分支
@@ -72,6 +105,10 @@
         - -t 生成rsa方式加密的秘钥
         - -C 替换注释信息
         - 根据秘钥配对GitHub确保是作者提交代码的依据
+- GitHub中添加公钥：
+    - 打开公户设置-> SSH秘钥
+    - 打开秘钥文件，将内容贴入“秘钥内容”框中，点击增加秘钥
+    - 可以使用SSH方式登陆
 - 添加远程库：
     - 在GitHub中新建仓库
     - 关联远程库: `git remote add origin url`：设置origin == url
@@ -99,16 +136,6 @@ tag 指定版本号，方便版本回退调试，默认标签是打在最新提�
     - `git push origin --tags`: 一次将全部未推送的标签完成推送
     - `git push origin :refs/tags/<tagname>`: 删除一个远程标签
         - 前提是完成本地标签的删除
-
-***
-### reset
-- `git reset --hard HEAD^`: 暂存区和工作去文件都恢复到前一次的commit状态
-    - HEAD^: 每个托字符表示回退一级
-    - HEAD~100: 表示退回100次
-- `git reset ID`: 重置当前分支的HEAD为指定ID，同时重置暂存区，工作区不变
-- `git reset --hard ID`: 重置当前分支的HEAD为指定ID，同时重置暂存区与工作区
-- `git reset --keep ID`: 重置当前分支的HEAD为指定ID，暂存区与工作区不变
-- `git reset file` : 将暂存区中的文件恢复到上次的commit状态，工作区不受影响
 
 #### 移动和删除
 - `git mv src dest`: 直接把改名的改动放入暂存区
