@@ -1,7 +1,7 @@
 ### Socket介绍
-- Python提供可Socket标准库，是非常底层的接口库
+- Python提供了Socket标准库，是非常底层的接口库
 - Socket是一种通用的网络编程接口，和网络层次没有一一对应的关系
-- 协议族(socket()的第一个参数)：
+- 协议族(socket()的第一个参数，选定协议类型)：
     - `AF_INET`: IPV4 (默认)
     - `AF_INET6`: IPV6
     - `AF_UNIX`: 
@@ -15,21 +15,21 @@
 #### TCP服务器端
 - TCP服务端编程步骤：
     1. 创建socket对象（Socket.socket()）
-    2. 绑定IP地址和端口号（bind((add,port))）
-        - 要求参数是一个元祖
+    2. 绑定IP地址和端口号（bind((ip,port))）
+        - 要求参数是一个元祖(给定服务器端的IP地址和监控的端口号)
         - 还没有占用端口
     3. 开始监听（listen()）
         - 正式占用端口
     4. 获取用来传送数据的socket对象（accept()）
         - 返回值是一个socket对象*rsocket*和raddr组成的元祖
-        - raddr是客户端的ip地址个端口号组成的元祖
+        - raddr是*客户端的ip地址和端口号组成的元祖*
         - accept()会一直阻塞到客户端连接
     5. 接受数据（rsocket.recv(1024)）
         - 使用4中新建的用于传送数据的socket对象
         - 必须设置缓冲区大小，建议1024/4096
-        - 返回值为data（bytes类型数据）
+        - *返回值为data（bytes类型数据）*
     6. 发送数据（rsocket.send(bytes)）
-        - 发送数据要求是bytes类型
+        - *发送数据要求是bytes类型*
 - *注：两次绑定统一端口会抛异常*
 
 - 服务器端基本代码
@@ -39,10 +39,10 @@
     servicer = socket.socket()
     servicer.bind(('127.0.0.1', 12345))
     servicer.listen()
-    s1,raddr = servicer.accept()
+    s1,raddr = servicer.accept()  # 阻塞等待
 
     while True:
-        data = s1.recv(1024)
+        data = s1.recv(1024)   #阻塞等待
         print(data)
 
         s1.send(b'I am OK, are u OK')
@@ -56,8 +56,9 @@
 - TCP客户端编程步骤：
     1. 创建socket对象（socket.socket()）
     2. 与服务器端连接（client.connect((ip,port))）
-        - 要求参数是一个元祖
+        - 要求参数是*服务器端ip和端口号port组成的元祖*
     3. 给服务器端发送数据（client.send(bytes)）
+        - 要求数据是bytes类型
     4. 接受从客户端的数据（(data = client.recv(1024))）
         - 要求必须提供缓冲区大小的参数
         - 返回值是bytes类型的数据
@@ -76,7 +77,7 @@
     client.connect(('172.16.101.126', 10008))
 
     while True:
-        data = client.recv(1024)
+        data = client.recv(1024)      # 阻塞等待
         logging.info(data)
         client.send(data)
         if data == b'quit':
@@ -104,15 +105,19 @@
 
         def load(self):
             self.socket.listen()
+            # 因为accept是阻塞函数，因此多线程方法实现
             threading.Thread(target=self._accept, args=(self.socket,), name=self.addr[0]).start()
 
         def _accept(self, servicer):
+            # 保证可以接受多客户端连接
             while True:
                 ss, addr = servicer.accept()
                 self.ssR[addr] = ss
+                # 因为recv是阻塞函数，因此多线程方法实现
                 threading.Thread(target=self._recv, args=(ss,), name=addr[0]).start()
 
         def _recv(self, servicer):
+            # 可以保证一直接受客户端的输入，直到连接断开
             while True:
                 try:
                     data = servicer.recv(1024)
@@ -126,6 +131,7 @@
                     break
 
         def exit(self):
+            # 依次关闭所有的连接
             for ss in self.ssR.values():
                 ss.close()
             self.socket.close()
@@ -143,7 +149,6 @@
     FORMAT = '%(asctime)s %(threadName)s %(message)s'
     logging.basicConfig(format=FORMAT, level=logging.INFO)
 
-
     class ClienTcp:
         def __init__(self, rip, rport):
             self.addr = (rip, rport)
@@ -155,6 +160,7 @@
             threading.Thread(target=self._recv, name='client').start()
 
         def _recv(self):
+            # event只是用来代替while True的作用
             while not self.event.is_set():
                 try:
                     data = self.client.recv(1024)
