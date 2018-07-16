@@ -26,6 +26,10 @@
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
 
+        # 可以使用的实例属性有：
+        # 连接客户端的socket对象：self.request
+        # server端的地址：self.server
+        # 客户端地址：self.client_address
         def handle(self):
             # self.request is the TCP socket connected to the client
             self.data = self.request.recv(1024).strip()
@@ -48,12 +52,13 @@
     - `MyTCPHandler`类必须是`BaseRequestHandler`类的子类
     - `MyTCPHandler`被初始化时，送入三个参数：request，client_address，server自身
     - 上面三个参数都会是`MyTCPHandler`的属性
-        - `self.request`: 是和客户端链接的socket对象，与accept返回值一样
+        - `self.request`: 是和客户端连接的socket对象，与accept返回值一样
+            - 每个不同的连接请求过来后，生成这个连接的socket对象：self.request
         - `self.server`: 是TCPServer自身
         - `self.client_address`: 是客户端地址
     - `MyTCPHandler`类有三个方法，在类的初始化时会依次调用：
         - `setup():` 实现一些参数的设置（一般不用）
-        - `handle():` 必须实现（接收到的数据如何处理）
+        - `handle():` 必须实现（接收到的数据如何处理），相当于socket的recv方法
         - `finish()：`setup中参数的清理（一般不用）
 - 在serve_forever函数中，会实例化MyTCPHandler对象，每个实例中有一个数据通信的socket对象
 - *注：*       
@@ -69,12 +74,12 @@
     logging.basicConfig(format=FORMAT, level=logging.INFO)
 
     class ChatHandler(socketserver.BaseRequestHandler):
-        ssr = set()
+        ssr = set()      # 多个连接对象存放在类属性中，不是存放在实例属性中
 
         def handle(self):
             self.ssr.add(self.request)
             while True:
-                data = self.request.recv(1024)
+                data = self.request.recv(1024)    # self.request已经是accept连接后新建的socket对象了
                 if data.strip() == b'quit' or data == b'':
                     self.ssr.remove(self.request)
                     break
@@ -103,6 +108,10 @@
 
         def handle(self):
             self.ssr.add(self.request)
+            # 开线程的本意是担心会产生阻塞
+            # 但是模块在创建新连接部分已经有多线程处理
+            # 这里的阻塞只是接受消息的阻塞，不会对创建新连接产生阻塞
+            # 因此不用开启新线程
             th = threading.Thread(target=self._recv, name='handle')
             th.start()
             th.join()   # 没有这一句会提示request不是socket
@@ -138,15 +147,15 @@
             self.finish_request(request, client_address)
             self.shutdown_request(request)
 
-        def finish_request(self, request, client_address):
-            """Finish one request by instantiating RequestHandlerClass."""
-            self.RequestHandlerClass(request, client_address, self)
+    def finish_request(self, request, client_address):
+        """Finish one request by instantiating RequestHandlerClass."""
+        self.RequestHandlerClass(request, client_address, self)
 
-        def shutdown_request(self, request):
-            """Called to shutdown and close an individual request."""
-            self.close_request(request)
+    def shutdown_request(self, request):
+        """Called to shutdown and close an individual request."""
+        self.close_request(request)
 
-        def close_request(self, request):
-            """Called to clean up an individual request."""
-            pass
+    def close_request(self, request):
+        """Called to clean up an individual request."""
+        pass
 ```
