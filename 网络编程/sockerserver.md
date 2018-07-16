@@ -122,6 +122,7 @@
             while True:
                 logging.info(self.request)
                 data = self.request.recv(1024)
+                # 验证data为空字符，可以避免在客户端主动断开连接后抛出异常
                 if data.strip() == b'quit' or data == b'':
                     self.ssr.remove(self.request)
                     break
@@ -159,3 +160,9 @@
         """Called to clean up an individual request."""
         pass
 ```
+
+### 客户端断开连接抛异常处理
+- 客户端主动断开连接：
+    - recv方法会立即返回一个空bytes，并没有立即抛出异常
+    - 当再次循环到recv语句时，才会抛出异常
+    - 因此可以在recv函数后判断是否为空bytes来判断客户端的连接状态
