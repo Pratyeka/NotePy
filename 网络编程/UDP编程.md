@@ -1,5 +1,7 @@
 ### UDP编程
 - UDP的Socket编程分为服务器端和客户端实现两部分
+- UDP是无连接协议，所以可以只有任何一端
+    - 例如: 客户端数据发往服务端，服务端存在与否无所谓
 
 #### UDP服务器端
 - UDP服务器端代码实现步骤：
@@ -11,7 +13,7 @@
     3. 接受客户端消息（servicer.recv(1024)）
         - 要求必须输入缓冲器的大小参数
         - 返回值是bytes类型数据
-        - 使用recvfrom可以得到，bytes数据以及客户端的地址的元祖
+        - 使用recvfrom可以得到，bytes数据以及客户端的地址
     4. 给客户端发送消息（servicer.send(bytes)）
         - 报错，提示没有目的地址（可以使用connect函数添加目的地址属性）
             - 一般不建议在服务器端使用connect函数，会出错
@@ -25,7 +27,6 @@
 
     FORMAT = '%(asctime)s %(threadName)s %(message)s'
     logging.basicConfig(format=FORMAT, level=logging.INFO)
-
 
     servicer = socket.socket(type=socket.SOCK_DGRAM)
     addr = ('127.0.0.1', 10003)
@@ -67,6 +68,15 @@
     logging.info(data)
     user.close()
 ```
+
+- UDP编程中的常用函数
+    - socket：socket对象创建后，是没有占用本地ip和端口的
+    - bind：可以指定本地ip地址和端口，会立即占用
+    - connect：可以立即占用本地地址和端口，填充远端地址和端口
+    - send：需要和connect配合使用，可以把数据从本地端口发往指定的远端
+    - sendto：可以立即占用本地地址和端口，并把数据发往指定端
+    - recv：要求一定在占用了本地端口后，接受返回的数据
+    - recvfrom：要求一定要占用了本地端口后，返回接受的数据和对端地址
 
 ### UDP版本群聊实现
 - UDP 服务器端
@@ -142,6 +152,9 @@
         def start(self):
             self.client.bind(self.addr)
             threading.Thread(target=self._recv, name='user').start()
+            # 如果客户端断开，服务端不知道
+            # 服务器继续给断开的客户端发送消息，会造成资源的浪费
+            # 使用心跳机制来清理已将断开的客户端
             threading.Thread(target=self.hb, name='hb').start()
 
         def _recv(self):
@@ -164,13 +177,15 @@
         user.start()
 ```
 
+
 ### 心跳机制
 - 心跳：一端向另外一端定时发送信号来确定是否还在提供服务
     - 一般要求心跳数据包越小越好，防止抢占带宽资源
     - 一般由客户端发起
-        - 服务器端收到心跳包可以直接确定客户端活动，且不需要返回消息
+        - *服务器端收到心跳包可以直接确定客户端活动，且不需要返回消息*
         - 比服务器端发送心跳包更加高效
 
 ### UDP与TCP的对比
 - UDP使用假设：网络环境好，不丢包，不乱序（理想态）
 - UDP的效率高于TCP，但是TCP的安全性高于UDP
+- 应用场景：视频、音频传输、海量采集数据
