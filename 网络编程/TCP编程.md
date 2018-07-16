@@ -106,6 +106,7 @@
         def load(self):
             self.socket.listen()
             # 因为accept是阻塞函数，因此多线程方法实现
+            # 为了避免主线程被阻塞
             threading.Thread(target=self._accept, args=(self.socket,), name=self.addr[0]).start()
 
         def _accept(self, servicer):
@@ -113,7 +114,8 @@
             while True:
                 ss, addr = servicer.accept()
                 self.ssR[addr] = ss
-                # 因为recv是阻塞函数，因此多线程方法实现
+                # 因为recv是阻塞函数（会阻塞导致无法正常完成下一个连接的创建），因此多线程方法实现
+                # 为了避免无法对新来的请求完成连接
                 threading.Thread(target=self._recv, args=(ss,), name=addr[0]).start()
 
         def _recv(self, servicer):
