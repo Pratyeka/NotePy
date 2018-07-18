@@ -134,37 +134,54 @@
             - `SELECT SUM(id) FROM table GROUP BY name HAVING AVG(sal）> 2000`
         - 分组并过滤后，按组聚合并排序
             - `SELECT SUM(id) FROM table GROUP BY name HAVING AVG(sal）> 2000 ORDER BY sal`
+```sql
+--   语句                    对应的执行顺序
+    SELECT                     5
+        emp_no,
+        max(salary) AS max,
+        sum(salary) AS sum,
+        avg(salary) AS avg,
+    FROM                       1
+        salaries
+    WHERE                      2
+        emp_no > 10012
+    GROUP BY                   3
+        emp_no
+    HAVING                     4 
+        avg(salaries) > 100
+    LIMIT 5 OFFSET 2           6
+    ORDER BY                   7
+        sum DESC; 
+```
+
 - 子查询
     - 查询语句可以嵌套，内部查询就是子查询
     - 子查询必须在一组小括号内
     - 自查询不能使用ORDER BY 
     ```SQL
     SELECT * FORM table WHERE id IN (SELECT id FROM table1 WHERE sal>1000) order by sal;
+
+    SELECT * FORM (SELECT id FROM table1 WHERE sal>1000) as table WHERE table.id>10  order by sal;
     ```
 - 连接join
     - 交叉连接 cross join： 全部连接
     - 内连接 inner join：省略为join
-    - 等值连接： 只选用某些field相等的行，使用ON限定关联的结果
+    - 等值连接：只选用某些field相等的行，使用ON限定关联的结果
         - `SELECT * FROM table JOIN table1 ON table.id = table1.id`
-    - 左外连接
-        - 看表的数据的方向，谁是主表，谁的所有数据都显示
-        - 没有的补null
+    - 左外连接： `A left join B on cond1`
+        - 从A看向B，要求A中的全部数据都出现
+        - 如果B中有满足cond1的数据，与A中对应数据连接输出
+            - 多个满足条件的数据，会展开成多行数据
+        - 如果B中没有满足条件的数据，A中数据与对应数量的null连接输出
     - 右外连接
         - 同左外连接原理
     - 自连接
-        - 自己和自己连接
-
-***
-#### select语句的执行顺序
-- **select语句中关键字的出现顺序**
-1. from
-2. where
-3. group by
-4. having
-5. order by
-6. limit
-7. for update
-
+        - 自己和自己连接，实现同一个表中两个字段之间的添加查询
+- 连接子句的执行顺序
+    - `select * from A join B on cond1`: on在执行join时发生
+    - `select * from A join B where cond1`: where在join后发生
+    - `select * from A join B on cond1 where cond2`: 先on在where
+    - 推荐使用join on子句，除非必须不推荐使用where
 ***
 ### 事务Transation
 - InnoDB引擎，支持事务
@@ -191,3 +208,11 @@
     - 隔离级别越高，串行化越高，数据库的效率越低
     - 隔离界别越低，并行程度越高，性能越高
     - 隔离级别越高，当前事务的中间结果对其他事务的不可见程度越高
+
+### 数据库与数据仓库
+- 数据库：关注数据的持久化、数据的关系，为业务提供支持，事务支持
+- 数据仓库：关注数据的存储，一般用来囤积历史数据，不建议删除修改
+
+### 游标
+- 操作查询的结果集的一种方法
+- 可以将游标当做一个指针，指向结果集中的某一行
