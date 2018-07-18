@@ -23,7 +23,7 @@
         - pip install -r requirement
 - linux平台下Pyenv安装
     1. 安装git：yum install git -y
-    2. 安装Python编译依赖项：yum -y insktall gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel
+    2. 安装Python编译依赖项：yum -y install gcc make patch gdbm-devel openssl-devel sqlite-devel readline-devel zlib-devel bzip2-devel
     3. 创建用户Python： useradd python
     4. 使用python用户登陆后安装Pyenv：
     ```shell
