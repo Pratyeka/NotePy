@@ -1,68 +1,41 @@
-### 基本数据类型介绍
-
-- 一维数据
-    - 由对等关系
-    - 列表和集合类型构成
-- 列表和数组
-    - 相同：一组数据的有序结构
-    - 不同：
-        - 列表：数据可以不同
-        - 数组：要求数据类型一致
-- 二维数据
-    - 由多个一维数据构成，是一维数据的组合形式
-    - 表格是典型的二维数据
-    - 列表形式构成
-- 多维数据
-    - 由二维数据在新的维度上组合形成
-    - 列表形式构成
-- 高维数据
-    - 仅利用最基本的二元关系展示数据间的复杂结构（键值对组织起来的）
-    - 字典类型构成
-- 数据格式：json、xml、yaml
-***
-
 ### numpy的数据对象ndarray
 - ndarray: 是一种同类型的多维数组，在程序中的别名是array
     - 存储包括数据元素本身，以及数组的元信息（数据维度、数据类型等）
     - ndarray与列表结构之间的区别是：
-        - 去掉元素运算时所需的循环结构，使用时更类似与一个元素，而不是数组
-        ```Python
-            import numpy as np
-
-            a = np.arange(5)
-            b = np.arange(9,4,-1)
-            c = a**2 + b**2
-        ```
+        - 去掉元素运算时所需的循环结构，使用时更类似于一个元素，而不是数组
         - python中提供专用的数据结构，可以更好的进行计算优化
         - ndarray结构中的元素是同类型数据，相比于列表结构，可以更好的节省存储空间
         - ndarray支持多种元素定义：元素的精确定义可以优化存储和运行速度
         - ndarray可以由非同质对象构成，会导致如法发挥numpy的优势，尽量避免
 
 - ndarray对象的属性：
-    - .ndim: 秩，轴的数量或者维度的数量
-    - .shape: ndarray对象的尺寸，对于矩阵(n,m)
-    - .size: ndarray对象的元素个数，n*m
-    - .dtype: ndarray对象的元素类型
-    - .itemsize: ndarray对象中每个元素占用内存大小，以字节为单位
+    - `.ndim`: 秩，轴的数量或者维度的数量
+    - `.shape`: ndarray对象的尺寸，对于矩阵(n,m)
+    - `.size`: ndarray对象的元素个数，n*m
+    - `.dtype`: ndarray对象的元素类型
+    - `.itemsize`: ndarray对象中每个元素占用内存大小，以字节为单位
+    - `.flat`: 返回一个一维的迭代器对象
 - ndarray对象的数据类型：
-    - bool：布尔类型
-    - int8: 8位长度的整数类型
-    - int64：64位长度的整数类型
-    - uint8: 8位无符号整数类型
-    - float16: 16位的浮点数类型
-    - complex64：64位的浮点数类型（实、虚都是32位）
+    - `bool`：布尔类型
+    - `int8`: 8位长度的整数类型
+    - `int64`：64位长度的整数类型
+    - `uint8`: 8位无符号整数类型
+    - `float16`: 16位的浮点数类型
+    - `complex64`：64位的浮点数类型（实、虚都是32位）
     - 可以使用dtype类创建自定义的数据类型
+***
 
 ### ndarray数组的创建和变换
 - 数组的创建：
     - `np.array(list/tuple, dtype=np.float32)`: 创建一个ndarray实例对象
         - array函数，接受一个可迭代对象(列表/元祖)，返回一个ndarray对象
         - dtype省略时，np会根据list元素类型来创建ndarray对象
-    - `np.arange(10).reshape(2,5)`: 使用arange函数新建一维的实例对象，在形状修改
+    - `np.arange(10).reshape(2,5)`: 使用arange函数新建一维的实例对象，再进行修改
         - arange函数，接受一个整数，返回一维ndarray对象
     - `np.ones(shape)`: 返回一个尺寸为shape，元素全为1的ndarray实例对象
         - shape一般是一个tuple
     - `np.zeros(shape)`: 返回一个尺寸为shape，元素全为0的ndarray实例对象
+        - `z = np.zeros(10)   w = np.zeros((3,4))`
     - `np.full(shape,val)`:返回一个尺寸为shpae，元素为val的ndarray实例对象
     - `np.eye(n)`: 返回一个尺寸为(n,n)的ndarray对象，对角线为1，其余为0
     - `np.ones_like(a)`: 根据数组a的shape生成一个全1的数组
@@ -71,19 +44,13 @@
     - `np.linspace(start, end, nums)`:介于[start,end]之间的nums个元素的一维数组
         - 设置参数endpoint=False，数组元素介于[start,end)之间
     - `np.concatenate((a,b),axis=1)`:在指定维度拼接a和b两个数组对象
+    - `np.diag(a)`:将一维数组元素放在对角线上，得到一个奇异值矩阵
+***
 
 - 数组的变换
     - `a.reshape(shape)`: 按照给定shape修改数组a的尺寸
         - 返回一个数组，数组a不变化
         - `a.shape=(4,6)`: 也可以改名数组a的形状
-        a = np.arange(1,21).reshape(4,5)
-        ```Python
-            a = np.arange(1,21).reshape(4,5)
-            array([[ 1,  2,  3,  4,  5],
-                [ 6,  7,  8,  9, 10],
-                [11, 12, 13, 14, 15],
-                [16, 17, 18, 19, 20]])
-        ```
     - `a.resize(shape)`: 按照给定shape修改数组a的尺寸
         - 就地修改，数组a的尺寸变化为shape指定的尺寸
     - `a.swapaxes(ax1, ax2)`: 交换数组a的两个维度
@@ -109,7 +76,6 @@
     - `np.vsplit(a, 3)`: 将数组a在垂直方向等分
     - `np.hsplit(a, 3)`: 将数组a在水平方向等分
     - `np.dsplit(a, 3)`: 将数组a在深度方向等分
-
 - 数组的索引和切片
     - 一维数组的索引和切片：与python的列表类似 
         - a[2] : 返回一个元素
@@ -117,6 +83,8 @@
     - 多维数组的索引和切片
         - a[1,2,3]/a[-1,-2,-3]: 返回一个元素
         - a[:,1,-3]/a[:,1:3,:]/a[:,:,::2]：返回一个array数组
+***
+
 - 数组的运算：
     - 数组与标量之间的运算：标量作用在数组中的每一个元素
         - a = a/a.mean()
@@ -139,27 +107,207 @@
         - `np.copysign(x,y)`: 将数组y中各元素的符号赋值给数组x对应的元素
         - `> < == !=`: 算数比较，产生布尔型数组
 
-
+***
 - 数组的存取
-    - 一二维数据可以存储为csv文件：
-        - `np.savetxt(path, array, fmt, delimiter)`: 存储
-        - `np.loadtxt(path, delimiter)`: 取出
+    - *一、二维数据*可以存储为csv文件(用来存储批量数据)：
+        - `np.savetxt(frame, array, fmt, delimiter)`: 存储
+            - frame:可以是path或者压缩文件
+            - fmt设置存储数据的格式 %f 等等
+        - `np.loadtxt(frame, dtype, delimiter,unpack)`: 取出
+            - frame:可以是path或者压缩文件
+            - dtype:导出数据类型转换
+            - unpack:True时，读入属性将分别写入不同变量
     - 多维数据存储为dat文件：
-        - `a.tofile(path, sep='', fmt)`: 数据存储(元数据丢失)
-        - `np.loadfile(path, dtype, count, sep='')`: 取出
-        - 可以另外存储元数据信息，可以更好的取出数据
+        - `a.tofile(frame, sep='', fmt)`: 数据存储(元数据丢失)
+            - seq：如果是空串，写入文件为二进制形式
+            - fmt：写入数据的格式
+        - `np.fromfile(frame, dtype, count, sep='')`: 取出
+        - 需要作者另外存储元数据信息，才可以按照元数据的设置取出数据
     - python中的数据存数格式npy：
         - `np.save(path, a)`: 存为npy格式
         - `np.savez(path, a)`: 存为npz格式
         - `np.load(path)`: 加载数据
         - 在save时已经默认存储了数组的元数据信息
 
+***
 - random类
     - `npm.rand(d1, d2, d3, d4)`: 新建一个4维的数组
         - 元素值都是0-1之间的float数据,服从均匀分布
-    - `npm.randn(d1, d2, d3, d4)`: 新建一个4为的数组
+    - `npm.randn(d1, d2, d3, d4)`: 新建一个4维的数组
         - 元素值服从标准正态分布
-    - `npm.randint(start, end, shape)`
-    - `npm.shuffle(a)`: 对a元素打乱排序，a数据就地修改
-    - `npm.uniform(start,end,shape)`
-    - `npm.normal(std,val,shape)`
+    - `npm.randint(start, end, shape)`：根据shape创建随机整数或整数数组，范围是[low,high)
+    - `npm.seed(int)`: 设置随机数种子，种子相同，产生的数组就相同
+    - `npm.shuffle(a)`: 根据数组a的第一轴元素打乱排序，a数据就地修改
+    - `npm.permutation(a)`: 类似shuffle，只是不改变a，产生新的数组
+    - `npm.choice(a,size,replace,p)`: 从a中选择size大小的数组，replace控制重复选,p可以设置元素被抽取的概率
+    - `npm.uniform(start,end,shape)`：产生一个均匀分布的数组，从start->end，数组形状为shape
+    - `npm.normal(std,val,shape)`：产生一个具有正太分布的数组，std为均值，val为标准差
+    - `npm.poisson(lam,size)`: 产生一个具有泊松分布的数组，lam为参数
+    - `npm.binomial(n,p,size)`: 产生一个数组，每个元素表示事件发生的次数
+        - n：表示每次实验的次数
+        - p：表示事件发生概率
+    - `npm.hypergeometric(n1,n2,m,size)`: 
+        - n1: 表示好球的数量
+        - n2: 表示坏球的数量
+        - m： 表示每次采样的数量
+        - size：返回的数组的尺寸
+
+***
+- numpy的统计函数
+    - `np.sum(a, axis=None)`: 根据指定轴axis计算数组a相关元素之和，axis整数或者元祖
+    - `np.mean(a, axis=None)`: 根据给定轴计算数组a相关元素的期望，axis整数或者数组
+    - `np.average(a, axis=None, weights=None)`: 根据给定轴axis计算数组a相关元素的加权平均值
+        - weight 与 a 的矩阵乘法结果作为返回值
+    - `np.std(a, axis=None)`: 根据给定轴axis计算数组a相关元素的标准差
+    - `np.var(a, axis=None)`: 根据给定轴axis计算数组a相关元素的方差
+    - `np.min(a)/np.max(a)`: 计算最小值/最大值
+    - `np.argmin(a)/np.argmax(a)`: 计算a中最小值，最大值的一维形式下标
+    - `np.nanargmax(a)`: 计算a中的最小值索引，但是忽略NaN
+    - `np.argwhere(condition)`: 根据条件搜索非零的元素，并分组返回对应的下标
+    - `np.unravel_index(index, shape)`: 根据shape形状将index的一维坐标转为多维坐标值
+    - `np.ptp(a)`: 计算数组a中各元素最大值与最小值的差
+    - `np.median(a)`: 计算数组a中元素的中位数（奇偶数不一样）
+    - `np.gradient(a)`: 计算数组a中元素的梯度，当a为多维时，返回每个维度的梯度
+    - `np.cov(a,b)`: 计算数组a和数组b的协方差矩阵
+    - `a.trace()`: 计算数组a的迹（对角线上元素的和）
+    - `np.corrcoef(a,b)`: 计算数组a、b的相关系数
+***
+- numpy的常用函数
+    - `a.prod()`: 计算数组a的阶乘
+    - `a.cumprod()`: 计算数组a的累积乘积
+    - `np.diff(a)`: 计算数组a的梯度
+    - `a.diagonal()`: 返回数组a的对角线的数据
+    - `a.all()`: 数组a中的元素是否全部为True
+    - `a.any()`: 数组a中的元素是否有True
+    - `poly = np.polyfit(t, a, num)`:使用num维度的函数来拟合数组a
+    - `np.polyval(poly, t[-1]+1)`: 根据多项式来预测下一个值
+        - `t[-1]+1`可以替换为t(一个列表),返回多个点对应的值
+    - `np.roots(poly)`: 求多项式的根
+    - `np.polyder(poly)`: 对多项式函数求导，返回多项式的导数
+        - 求出多项式导数的根，就是多项式的极值点
+    - `np.polysub(poly1, poly2)`: 计算两个多项式的差值
+    - `np.diff(a)`: 求数组a中两个连续元素的差值，返回由差值对应的数组
+    - `np.sign(a)`: 返回数组中每个元素的符号构成的数组
+    - `np.piecewise(a, [a<0, a>0], [-1,1])`: 使用合适的返回值和对应条件调用函数
+    - `np.vectorize(func)`: 矢量化一个函数，可以用来避免循环操作
+    - `np.hanning(N)`: 生成一个N维的权重数组，用来平滑输入数据
+    - `np.isreal(a)`: 判断数组a中元素是否是实数
+    - `np.select([conditions], [a])`:从数组a中根据条件conditions选出对应的元素
+    - `np.trim_zeros(a)`: 去掉一维数组中开头和末尾的0元素
+    - `np.unique(a)`: 返回数组a中的元素，排除重复元素之后，进行排序
+    - `np.intersect1d(a,b)`: 返回数组a和数组b之间的交集
+    - `np.union1d(a,b)`: 返回数组a和数组b之间的并集
+    - `np.setdiff1d(a,b)`: 返回数组a和数组b之间的差
+    - `np.setxor1d(a,b)`: 返回数组a和数组b之间的对称差
+
+***
+- 矩阵
+    - 矩阵是ndarray的子类，可以由专用的字符串格式来创建，矩阵是二维形式的
+    - 矩阵的乘法运算与ndarray数组的乘法运算不同，幂运算也不同
+        - 计算中有矩阵参与就按照矩阵乘法操作
+    - 可以使用mat、matrix、bmat函数来创建矩阵
+    - `A = np.mat('1 2 3;4 5 6;7 8 9')`: 使用mat函数来创建矩阵
+        - 矩阵的行之间使用';'作为分隔符，行内元素之间使用空格来分割
+    - `A.T`：使用T属性获取转置矩阵
+    - `A.I`：使用I属性获取逆矩阵
+    - `np.mat(c)`：使用ndarray数组c来创建矩阵
+        - 如果输入是matrix或者ndarray对象，不会为他们创建副本 
+        - 等价于`np.matrix(c, copy=False)`
+    - `bmap函数`：利用已有的较小的矩阵来创建一个新的大矩阵
+        - bmat：'block mat'（分块矩阵）
+        - `np.bmat('A B;A B')`: 使用字符串创建复合矩阵
+            - 字符串格式与mat格式一致，
+            - 可以使用矩阵/ndarray对象来代替数字
+
+- 通用函数
+    - 通用函数的输入是一组标量，输出也是一组标量，它们通常对应于基本的数学运算，加减乘除等
+    - 通用函数并非真正的函数，而是能够表示函数的对象
+    - 通用函数有四个方法: 只对输入两个参数、输出一个参数的ufunc有效，
+    不符合条件的ufunc对象调用时抛出ValueError
+        - `reduce`：在连续的数组元素之间递归调用通用函数
+        - `accumulate`：递归作用于输入数组，存储运算的中间结果并返回
+        - `reduceat`：需要输入一个数组以及一个索引值列表作为参数
+            - 小索引在前：计算两个索引间的reduce
+            - 大索引在前：直接返回大索引对应的值
+        - `outer`：返回一个数组，作用在两个输入数组之间存在的所有元素对
+
+- 算术运算
+    - numpy中，+_*隐式关联着通用函数add/subtract/multiply
+        - 在使用算术运算时，对应的通用函数将被自动调用
+    - 除法包含多种情况：
+        - `divide`：与true_divide相同
+        - `true_divide`: 返回除法的浮点数结果而不作截断
+        - `floor_divide`: 返回整数结果，相当于先调用divide函数再调用floor函数
+        - 默认情况下，使用 / 运算符相当于调用divide函数
+        - 在`from __future__ import division`的情况下，相当于调用true_divide函数
+        - 运算符//对应于floor_divide函数
+
+- 模运算 余数计算
+    - `np.remainder(a,b)`: 逐个返回两个数组中元素相除后的余数
+        - 如果第二个数为0，直接返回0
+    - `np.mod(a,b)`: 与remainder函数功能完全一致
+    - `%`：调用remainder函数
+    - `fmod(a,b)`: 处理负数的方式与上面的不同
+        - 所得余数的正负由被除数决定，与除数的正负无关
+
+- 位操作函数和比较函数
+    - 位操作函数可以在整数或者整数数组的位上进行操作，他们都是通用函数
+        - `^ & | << >>`: 都是常用的位操作符
+    - 检查两个数的符号是否一致：
+        - XOR(^): 不等运算符，两个操作数的符号不一致时，XOR的结果是负数
+        - 在numpy中，^运算符等价于bitwise_xor函数
+    - 检查一个数是否是2的幂数：
+        - AND(&): 与运算符，两个操作数都为真则为真
+        - 在numpy中，&运算符等价于bitwise_and函数
+        - `(x & (x-1)) == 0`:
+            - 2的幂数是100000的形式，n-1是0111111的形式，与为0
+    - 检查一个数被2的幂数整除后的余数
+        - `x & ((1 << 2) - 1)`
+
+- 线性代数
+    - numpy.linalg模块包含线性代数的函数
+    - `np.linalg(a)`: 求方阵a的逆矩阵
+        - 数组a不是方阵或者不可逆时，返回LinAlgError异常
+        - 等价于 a.I
+    - `np.solve(a,b)`: 根据矩阵a和矩阵b求解Ax=b的线性方程组
+        - a为矩阵，b是一维或者二维数组
+    - `np.dot(a,x)`: 计算矩阵a和矩阵x的点积
+    - `np.linalg.eigvals(a)`: 求数组a的特征值
+    - `np.linalg.eig(a)`: 求数组a的特征值以及对应的特征向量
+        - 返回的是一个元祖
+        - 元祖的第一个元素是特征值
+        - 元祖的第二个元素是特征向量（按列存储）
+    - `np.linalg.svd(a, full_matrices=False)`: 对数组a执行特征值分解
+        - 函数返回3个矩阵：U、Sigmia、V（U、V是正交矩阵，Sigmia包含输入矩阵的奇异值）
+        - Sigmia是一维的数组，元素是矩阵的奇异值
+    - `np.pinv(a)`: 计算数组a的广义逆矩阵
+    - `np.det(a)`: 计算矩阵a的行列式
+
+- 快速傅里叶变换
+    - `np.fft.fft(a)`: 对数组a进行fft变换
+    - `np.fft.ifft(b)`: 对数组b（fft变化的）进行变换，还原信号
+    - `np.fft.fftshift(b)`: 对数组b（fft变化的）进行移频操作
+    - `np.fft.ifftshift(c)`: 对数组（移频的）进行逆变换，还原移频前操作
+
+- 专用函数
+    - `np.sort(a)`: 返回排序后的数组
+    - `np.lexsort(a)`:根据键值的字典进行排序
+    - `np.sort_complex(a)`: 对复数进行排序，先按照实数，再按照虚数
+    - `np.searchsorted(a,eles)`: 为插入值eles返回数组a中的索引位置数组indieces
+        - 要求a为有序数组，使用的是二分法插入
+        - 在返回位置插入可以保证数组的有序性
+    - `np.insert(a, indieces,eles)`: 返回插入后的数组
+    - `np.extract(condition,a)`: 根据一个指定的布尔条件从数组中抽取元素
+    - `np.nonzero(a)`: 从数组a中抽取非零元素构成数组
+
+ 
+- 数组/矩阵乘法总结：
+    - 数组ndarray：可以是任意维度；矩阵matrix：只能是二维的
+    - 数组的乘法：
+        - `*`: 表示简单的数量积，即对应位置元素相乘后的结果 == `np.multiply(a,b)`
+            - 要求两个矩阵具有相同的维度大小或者至少一个维度相同
+        - `.*`: 表示矩阵的矢量乘法，矩阵乘法规矩
+            - A.dot(B) == np.dot(A,B) == np.matmul(A,B)
+    - 矩阵的乘法：
+        - `*`: 表示点积，即矢量积
+            - 求数量积的时，必须采用np.multiply(A,B)
